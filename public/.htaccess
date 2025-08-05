@@ -1,0 +1,58 @@
+# Stackvel Framework - Apache Configuration
+# This file protects internal directories and routes all requests through index.php
+
+# Enable URL rewriting
+RewriteEngine On
+
+# Protect sensitive files and directories
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.lock">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect internal directories
+RewriteRule ^(app|core|config|resources|routes|console|vendor)/ - [F,L]
+
+# Handle static files (CSS, JS, images, etc.)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ [NC]
+RewriteRule ^ - [L]
+
+# Route all other requests through index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# Disable directory browsing
+Options -Indexes
+
+# Prevent access to hidden files
+<Files ".*">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Allow access to specific hidden files
+<Files ".htaccess">
+    Order allow,deny
+    Allow from all
+</Files> 

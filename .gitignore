@@ -1,0 +1,81 @@
+# Stakel .gitignore
+
+# Composer
+/vendor/
+composer.phar
+composer.lock
+
+# Environment files
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+
+# Laravel specific
+/bootstrap/cache/
+/storage/*.key
+/storage/logs/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/app/public/
+
+# Application cache
+.phpstorm.meta.php
+_ide_helper.php
+_ide_helper_models.php
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node modules (if using Laravel Mix)
+/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build files
+/public/hot
+/public/storage
+/public/mix-manifest.json
+
+# Testing
+/coverage/
+.phpunit.cache/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Backup files
+*.bak
+*.backup
+
+# Database
+*.sqlite
+*.sqlite3
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Cache and compiled files
+*.cache
+*.compiled
+
+# Local configuration
+config/local.php 
