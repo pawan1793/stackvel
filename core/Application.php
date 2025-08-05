@@ -165,6 +165,63 @@ class Application
     }
 
     /**
+     * Generate a URL for the application
+     */
+    public function url(string $path = ''): string
+    {
+        $baseUrl = $this->config->getAppUrl();
+        $basePath = $this->getBasePath();
+        
+        // Remove trailing slash from base URL
+        $baseUrl = rtrim($baseUrl, '/');
+        
+        // Ensure path starts with /
+        if (!empty($path) && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+        
+        // For subdirectory installations, include the base path
+        if (!empty($basePath)) {
+            return $baseUrl . $basePath . $path;
+        }
+        
+        return $baseUrl . $path;
+    }
+    
+    /**
+     * Get the base path for the application
+     */
+    public function getBasePath(): string
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        
+        // If we're accessing through index.php directly
+        if (strpos($scriptName, '/index.php') !== false) {
+            return dirname($scriptName);
+        }
+        
+        // If we're in a subdirectory, detect it from the request URI
+        $pathInfo = pathinfo($requestUri);
+        if (isset($pathInfo['dirname']) && $pathInfo['dirname'] !== '/') {
+            return $pathInfo['dirname'];
+        }
+        
+        // Try to detect from script name if it contains the project path
+        if (strpos($scriptName, '/public/') !== false) {
+            $publicPos = strpos($scriptName, '/public/');
+            return substr($scriptName, 0, $publicPos + 7); // Include /public/
+        }
+        
+        // For development server (php -S), the script name might be just /index.php
+        if ($scriptName === '/index.php') {
+            return '';
+        }
+        
+        return '';
+    }
+
+    /**
      * Get the application version
      */
     public function version(): string

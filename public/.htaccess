@@ -4,6 +4,10 @@
 # Enable URL rewriting
 RewriteEngine On
 
+# Set the base path for subdirectory installations
+# Uncomment and modify the line below if your app is in a subdirectory
+# RewriteBase /stackvel/public/
+
 # Protect sensitive files and directories
 <Files ".env">
     Order allow,deny

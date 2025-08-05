@@ -103,12 +103,56 @@ class Router
     }
 
     /**
-     * Dispatch the request to the appropriate route
+     * Get the base path for the application
      */
+    private function getBasePath(): string
+    {
+        $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? '';
+        
+        // If we're accessing through index.php directly
+        if (strpos($scriptName, '/index.php') !== false) {
+            return dirname($scriptName);
+        }
+        
+        // If we're in a subdirectory, detect it from the request URI
+        // This handles cases like /stackvel/public/
+        $pathInfo = pathinfo($requestUri);
+        if (isset($pathInfo['dirname']) && $pathInfo['dirname'] !== '/') {
+            return $pathInfo['dirname'];
+        }
+        
+        // Try to detect from script name if it contains the project path
+        if (strpos($scriptName, '/public/') !== false) {
+            $publicPos = strpos($scriptName, '/public/');
+            return substr($scriptName, 0, $publicPos + 7); // Include /public/
+        }
+        
+        // For development server (php -S), the script name might be just /index.php
+        // In this case, we don't need a base path
+        if ($scriptName === '/index.php') {
+            return '';
+        }
+        
+        return '';
+    }
+
     public function dispatch()
     {
         $method = $_SERVER['REQUEST_METHOD'];
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+        
+        // Get the base path and remove it from the URI
+        $basePath = $this->getBasePath();
+        if ($basePath && strpos($uri, $basePath) === 0) {
+            $uri = substr($uri, strlen($basePath));
+        }
+        
+        // Ensure URI starts with /
+        if (empty($uri) || $uri[0] !== '/') {
+            $uri = '/' . $uri;
+        }
 
         // Remove trailing slash except for root
         if ($uri !== '/' && substr($uri, -1) === '/') {
