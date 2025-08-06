@@ -65,6 +65,9 @@ class Application
      */
     public static function getInstance(): self
     {
+        if (self::$instance === null) {
+            throw new \Exception("Application instance not initialized. Make sure Application is created before accessing getInstance().");
+        }
         return self::$instance;
     }
 

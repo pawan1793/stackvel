@@ -54,11 +54,35 @@ abstract class Model
     {
         $app = Application::getInstance();
         
+        // Debug: Check if app and database are properly initialized
+        if (!$app) {
+            throw new \Exception("Application instance is null");
+        }
+        
+        if (!isset($app->database)) {
+            throw new \Exception("Database manager is not initialized");
+        }
+        
+        // Debug: Check database manager type
+        if (!($app->database instanceof DatabaseManager)) {
+            throw new \Exception("Database manager is not a DatabaseManager instance: " . get_class($app->database));
+        }
+        
         // Use specified connection or default connection
         if (!empty($this->connection)) {
             $this->database = $app->database->connection($this->connection);
         } else {
             $this->database = $app->database->getDefaultConnection();
+        }
+        
+        // Debug: Check if database is properly set
+        if (!$this->database) {
+            throw new \Exception("Database connection is null for model: " . get_class($this));
+        }
+        
+        // Debug: Check database type
+        if (!($this->database instanceof Database)) {
+            throw new \Exception("Database is not a Database instance: " . get_class($this->database));
         }
         
         $this->fill($attributes);
@@ -110,19 +134,32 @@ abstract class Model
     }
 
     /**
-     * Find records by a column value
+     * Get the first record
      */
-    public static function where(string $column, $value): array
+    public static function first(): ?static
     {
         $instance = new static();
-        $table = $instance->getTable();
+        $queryBuilder = new QueryBuilder($instance);
         
-        $sql = "SELECT * FROM {$table} WHERE {$column} = ?";
-        $results = $instance->database->select($sql, [$value]);
+        return $queryBuilder->first();
+    }
+
+    /**
+     * Find records by conditions
+     * Supports both single condition and array of conditions
+     */
+    public static function where($column, $value = null): QueryBuilder
+    {
+        $instance = new static();
+        $queryBuilder = new QueryBuilder($instance);
         
-        return array_map(function ($row) {
-            return new static($row);
-        }, $results);
+        // If column is an array, it's an array of conditions
+        if (is_array($column)) {
+            return $queryBuilder->whereArray($column);
+        }
+        
+        // Single condition
+        return $queryBuilder->where($column, $value);
     }
 
     /**
@@ -131,12 +168,9 @@ abstract class Model
     public static function whereFirst(string $column, $value): ?static
     {
         $instance = new static();
-        $table = $instance->getTable();
+        $queryBuilder = new QueryBuilder($instance);
         
-        $sql = "SELECT * FROM {$table} WHERE {$column} = ? LIMIT 1";
-        $result = $instance->database->first($sql, [$value]);
-        
-        return $result ? new static($result) : null;
+        return $queryBuilder->where($column, $value)->first();
     }
 
     /**
@@ -301,6 +335,14 @@ abstract class Model
         }
         
         return $this->table;
+    }
+
+    /**
+     * Get the database instance
+     */
+    public function getDatabase(): Database
+    {
+        return $this->database;
     }
 
     /**
