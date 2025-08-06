@@ -184,6 +184,67 @@ abstract class Model
     }
 
     /**
+     * Find the first record matching the attributes or create it
+     * 
+     * @param array $attributes The attributes to search for
+     * @param array $values Additional values to set when creating (optional)
+     * @return static
+     */
+    public static function firstOrCreate(array $attributes, array $values = []): static
+    {
+        $instance = new static();
+        $queryBuilder = new QueryBuilder($instance);
+        
+        // Build where conditions from attributes
+        foreach ($attributes as $column => $value) {
+            $queryBuilder->where($column, $value);
+        }
+        
+        // Try to find existing record
+        $existing = $queryBuilder->first();
+        
+        if ($existing) {
+            return $existing;
+        }
+        
+        // Create new record with combined attributes and values
+        $createAttributes = array_merge($attributes, $values);
+        return static::create($createAttributes);
+    }
+
+    /**
+     * Find the first record matching the attributes or create it
+     * 
+     * @param array $attributes The attributes to search for
+     * @param array $values Additional values to set when creating (optional)
+     * @return static
+     */
+    public static function updateOrCreate(array $attributes, array $values = []): static
+    {
+        $instance = new static();
+        $queryBuilder = new QueryBuilder($instance);
+        
+        // Build where conditions from attributes
+        foreach ($attributes as $column => $value) {
+            $queryBuilder->where($column, $value);
+        }
+        
+        // Try to find existing record
+        $existing = $queryBuilder->first();
+        
+        if ($existing) {
+            // Update existing record with new values
+            $existing->fill($values);
+            $existing->save();
+            return $existing;
+        }
+        
+        // Create new record with combined attributes and values
+        $createAttributes = array_merge($attributes, $values);
+        return static::create($createAttributes);
+    }
+
+    /**
      * Save the model to the database
      */
     public function save(): bool
@@ -241,14 +302,16 @@ abstract class Model
         }
         
         $setClause = implode(', ', array_map(function ($column) {
-            return "{$column} = :{$column}";
+            return "{$column} = ?";
         }, array_keys($fillableAttributes)));
         
-        $sql = "UPDATE {$table} SET {$setClause} WHERE {$primaryKey} = :{$primaryKey}";
+        $sql = "UPDATE {$table} SET {$setClause} WHERE {$primaryKey} = ?";
         
-        $fillableAttributes[$primaryKey] = $this->attributes[$primaryKey];
+        // Build parameters array: first the set values, then the where condition
+        $params = array_values($fillableAttributes);
+        $params[] = $this->attributes[$primaryKey];
         
-        $affectedRows = $this->database->update($sql, $fillableAttributes);
+        $affectedRows = $this->database->update($sql, $params);
         
         return $affectedRows > 0;
     }

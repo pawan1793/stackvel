@@ -2,7 +2,7 @@
 
 **Minimal MVC. Maximum Control.**
 
-A lightweight, secure PHP MVC framework inspired by Laravel, designed to provide maximum developer control with minimal overhead.
+A lightweight, secure PHP MVC framework, designed to provide maximum developer control with minimal overhead.
 
 ## 🚀 Features
 

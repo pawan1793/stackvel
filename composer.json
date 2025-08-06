@@ -1,6 +1,6 @@
 {
     "name": "pawanmore/stackvel",
-    "description": "Minimal MVC. Maximum Control. A lightweight, secure PHP MVC framework inspired by Laravel.",
+    "description": "Minimal MVC. Maximum Control. A lightweight, secure PHP MVC framework.",
     "version": "1.0.3",
     "type": "project",
     "license": "MIT",
