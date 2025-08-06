@@ -52,7 +52,9 @@ class Kernel
             'schedule' => 'Run scheduled tasks',
             'make:controller' => 'Create a new controller',
             'make:model' => 'Create a new model',
-            'make:migration' => 'Create a new migration'
+            'make:migration' => 'Create a new migration',
+            'update:check' => 'Check for framework updates',
+            'update:framework' => 'Update framework to latest version'
         ];
     }
 
@@ -122,6 +124,12 @@ class Kernel
             
             case 'make:migration':
                 return $this->makeMigration($args[2] ?? null);
+            
+            case 'update:check':
+                return $this->checkForUpdates();
+            
+            case 'update:framework':
+                return $this->updateFramework();
             
             default:
                 echo "Unknown command: {$command}\n";
@@ -752,5 +760,177 @@ return new class {
         $heartbeatFile = APP_ROOT . '/storage/heartbeat.txt';
         file_put_contents($heartbeatFile, date('Y-m-d H:i:s'));
         echo "Heartbeat updated: " . date('Y-m-d H:i:s') . "\n";
+    }
+
+    /**
+     * Check for framework updates
+     */
+    protected function checkForUpdates(): int
+    {
+        echo "Checking for Stackvel Framework updates...\n";
+        
+        $currentVersion = $this->getCurrentVersion();
+        echo "Current version: {$currentVersion}\n";
+        
+        // Get latest version from Packagist
+        $latestVersion = $this->getLatestVersion();
+        
+        if ($latestVersion === false) {
+            echo "Could not check for updates. Please check your internet connection.\n";
+            return 1;
+        }
+        
+        echo "Latest version: {$latestVersion}\n";
+        
+        if (version_compare($currentVersion, $latestVersion, '<')) {
+            echo "\n🎉 A new version is available!\n";
+            echo "Run 'composer update pawanmore/stackvel' to update.\n";
+            echo "Or run 'php console.php update:framework' for automatic update.\n";
+            return 0;
+        } else {
+            echo "\n✅ You are running the latest version.\n";
+            return 0;
+        }
+    }
+
+    /**
+     * Update framework to latest version
+     */
+    protected function updateFramework(): int
+    {
+        echo "Updating Stackvel Framework...\n";
+        
+        $currentVersion = $this->getCurrentVersion();
+        echo "Current version: {$currentVersion}\n";
+        
+        // Get latest version
+        $latestVersion = $this->getLatestVersion();
+        
+        if ($latestVersion === false) {
+            echo "Could not check for updates. Please check your internet connection.\n";
+            return 1;
+        }
+        
+        if (version_compare($currentVersion, $latestVersion, '>=')) {
+            echo "You are already running the latest version.\n";
+            return 0;
+        }
+        
+        echo "Latest version: {$latestVersion}\n";
+        echo "Updating...\n";
+        
+        // Create backup
+        $this->createBackup();
+        
+        // Run composer update
+        $command = 'composer update pawanmore/stackvel --no-dev --optimize-autoloader';
+        echo "Running: {$command}\n";
+        
+        $output = [];
+        $returnCode = 0;
+        exec($command . ' 2>&1', $output, $returnCode);
+        
+        if ($returnCode !== 0) {
+            echo "Update failed. Please run 'composer update pawanmore/stackvel' manually.\n";
+            echo "Output:\n" . implode("\n", $output) . "\n";
+            return 1;
+        }
+        
+        // Update version file
+        file_put_contents(APP_ROOT . '/VERSION', $latestVersion);
+        
+        // Clear cache
+        $this->clearCache();
+        
+        // Optimize autoloader
+        echo "Optimizing autoloader...\n";
+        system('composer dump-autoload --optimize');
+        
+        echo "\n✅ Framework updated successfully to version {$latestVersion}!\n";
+        echo "Please review the changelog for any breaking changes.\n";
+        
+        return 0;
+    }
+
+    /**
+     * Get current framework version
+     */
+    protected function getCurrentVersion(): string
+    {
+        $versionFile = APP_ROOT . '/VERSION';
+        
+        if (file_exists($versionFile)) {
+            return trim(file_get_contents($versionFile));
+        }
+        
+        // Fallback to Application class version
+        return $this->app->version();
+    }
+
+    /**
+     * Get latest version from Packagist
+     */
+    protected function getLatestVersion(): string|false
+    {
+        $url = 'https://packagist.org/packages/pawanmore/stackvel.json';
+        
+        $context = stream_context_create([
+            'http' => [
+                'timeout' => 10,
+                'user_agent' => 'Stackvel-Framework/1.0'
+            ]
+        ]);
+        
+        $response = @file_get_contents($url, false, $context);
+        
+        if ($response === false) {
+            return false;
+        }
+        
+        $data = json_decode($response, true);
+        
+        if (!$data || !isset($data['package']['versions'])) {
+            return false;
+        }
+        
+        // Get the latest stable version
+        $versions = array_keys($data['package']['versions']);
+        $stableVersions = array_filter($versions, function($version) {
+            return !str_contains($version, 'dev') && !str_contains($version, 'alpha') && !str_contains($version, 'beta');
+        });
+        
+        if (empty($stableVersions)) {
+            return false;
+        }
+        
+        // Sort versions and return the latest
+        usort($stableVersions, 'version_compare');
+        return end($stableVersions);
+    }
+
+    /**
+     * Create backup before update
+     */
+    protected function createBackup(): void
+    {
+        echo "Creating backup...\n";
+        
+        $backupDir = APP_ROOT . '/storage/backups';
+        if (!is_dir($backupDir)) {
+            mkdir($backupDir, 0755, true);
+        }
+        
+        $timestamp = date('Y-m-d_H-i-s');
+        $backupFile = $backupDir . '/backup_' . $timestamp . '.tar.gz';
+        
+        $command = "tar -czf {$backupFile} --exclude=vendor --exclude=storage/backups --exclude=.git " . APP_ROOT;
+        
+        exec($command, $output, $returnCode);
+        
+        if ($returnCode === 0) {
+            echo "Backup created: {$backupFile}\n";
+        } else {
+            echo "Warning: Could not create backup. Continuing with update...\n";
+        }
     }
 }; 

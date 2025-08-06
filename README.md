@@ -50,6 +50,8 @@ Stackvel/
 
 ## 🛠 Installation
 
+For detailed installation instructions, see [INSTALLATION.md](docs/INSTALLATION.md).
+
 ### Prerequisites
 
 - PHP 8.0 or higher
@@ -58,6 +60,38 @@ Stackvel/
 - Apache/Nginx web server
 
 ### Quick Start
+
+#### Option 1: Using Composer Create-Project (Recommended)
+
+1. **Create a new project**
+   ```bash
+   composer create-project pawanmore/stackvel my-project
+   cd my-project
+   ```
+
+2. **Configure environment**
+   ```bash
+   cp env.example .env
+   # Edit .env with your database and mail settings
+   ```
+
+3. **Set up database**
+   ```bash
+   # Create your database
+   # Update .env with database credentials
+   ```
+
+4. **Start development server**
+   ```bash
+   php console.php serve
+   ```
+
+5. **Visit your application**
+   ```
+   http://localhost:8000
+   ```
+
+#### Option 2: Manual Installation
 
 1. **Clone the repository**
    ```bash
@@ -360,6 +394,12 @@ php console.php make:model User
 
 # Create new migration
 php console.php make:migration create_users_table
+
+# Check for framework updates
+php console.php update:check
+
+# Update framework to latest version
+php console.php update:framework
 ```
 
 ## ⏰ Scheduled Tasks
@@ -406,6 +446,39 @@ Run tests with PHPUnit:
 ```bash
 composer test
 ```
+
+## 🔄 Updating
+
+Stackvel Framework includes a comprehensive update system for projects created with `composer create-project`.
+
+### Check for Updates
+
+```bash
+# Check if updates are available
+php console.php update:check
+
+# Or use Composer script
+composer check-updates
+```
+
+### Update Framework
+
+```bash
+# Automatic update with backup
+php console.php update:framework
+
+# Or use Composer
+composer update pawanmore/stackvel
+```
+
+### Update Features
+
+- **Automatic Backup**: Creates timestamped backups before updates
+- **Version Checking**: Compares against latest version on Packagist
+- **Post-Update Optimization**: Clears cache and optimizes autoloader
+- **Rollback Support**: Easy rollback using created backups
+
+For detailed update instructions, see [UPDATING.md](docs/UPDATING.md).
 
 ## 📚 API Documentation
 
