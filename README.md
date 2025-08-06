@@ -61,7 +61,7 @@ Stackvel/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/stackvel.git
+   git clone https://github.com/pawan1793/stackvel.git
    cd stackvel
    ```
 
