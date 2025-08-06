@@ -1,7 +1,7 @@
 {
     "name": "pawanmore/stackvel",
     "description": "Minimal MVC. Maximum Control. A lightweight, secure PHP MVC framework inspired by Laravel.",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "project",
     "license": "MIT",
     "authors": [
@@ -39,7 +39,7 @@
             "php -r \"if (!file_exists('public/uploads')) mkdir('public/uploads', 0755, true);\"",
             "php -r \"if (!file_exists('storage/cache')) mkdir('storage/cache', 0755, true);\"",
             "php -r \"if (!file_exists('storage/logs')) mkdir('storage/logs', 0755, true);\"",
-            "php -r \"file_put_contents('VERSION', '1.0.2');\""
+            "php -r \"file_put_contents('VERSION', '1.0.3');\""
         ],
         "post-update-cmd": [
             "php console.php update:framework"

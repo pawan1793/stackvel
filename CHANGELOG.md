@@ -5,6 +5,17 @@ All notable changes to Stackvel Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2025-08-06
+
+### 🏷️ Release v1.0.3 – Framework Release 🚀
+
+This release includes the latest framework updates and improvements.
+
+#### 🔧 What's New:
+- Updated version to 1.0.3
+- Framework release preparation
+- Version consistency across all files
+
 ## [Unreleased]
 
 ### Added
@@ -21,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved console commands with update functionality
 - Added storage directories creation in post-install scripts
 
-## [1.0.2] - 2024-08-06
+## [1.0.2] - 2025-08-06
 
 ### 🏷️ Release v1.0.2 – Error Handling, Pagination & Query Builder 🚀
 
@@ -38,7 +49,7 @@ This release brings critical improvements to error handling and introduces power
 
 These changes make Stackvel more **resilient to errors** and much **easier to use for complex database operations**.
 
-## [1.0.1] - 2024-08-06
+## [1.0.1] - 2025-08-06
 
 ### 🏷️ Release v1.0.1 – Multiple Database Connections Support ⚙️
 
@@ -51,7 +62,7 @@ This patch release introduces support for **multiple database connections** and 
 - ✅ Refactored `Application` and `Config` to support new database setup.
 - ✅ Updated `README.md` with usage instructions for multi-DB configurations.
 
-## [1.0.0] - 2024-08-06
+## [1.0.0] - 2025-08-06
 
 ### 🏷️ Release v1.0.0 – Initial Stable Release 🎉
 
@@ -85,20 +96,26 @@ Whether you're building a small project or a full-stack app, **Stackvel** gives 
 
 ## Version History
 
+### Version 1.0.3
+- **Release Date**: December 19, 2025
+- **Status**: Stable
+- **PHP Requirement**: >= 8.0
+- **Key Features**: Framework release with version consistency updates
+
 ### Version 1.0.2
-- **Release Date**: August 6, 2024
+- **Release Date**: August 6, 2025
 - **Status**: Stable
 - **PHP Requirement**: >= 8.0
 - **Key Features**: Error handling improvements, pagination, and query builder
 
 ### Version 1.0.1
-- **Release Date**: August 6, 2024
+- **Release Date**: August 6, 2025
 - **Status**: Stable
 - **PHP Requirement**: >= 8.0
 - **Key Features**: Multiple database connections support
 
 ### Version 1.0.0
-- **Release Date**: August 6, 2024
+- **Release Date**: August 6, 2025
 - **Status**: Stable
 - **PHP Requirement**: >= 8.0
 - **Key Features**: Complete MVC framework with all core functionality
