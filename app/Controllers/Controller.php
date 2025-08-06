@@ -6,6 +6,7 @@ use Stackvel\Application;
 use Stackvel\View;
 use Stackvel\Session;
 use Stackvel\Mailer;
+use Stackvel\Request;
 
 /**
  * Stackvel Framework - Base Controller Class
@@ -35,6 +36,11 @@ abstract class Controller
     protected Mailer $mailer;
 
     /**
+     * Request instance
+     */
+    protected Request $request;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -43,6 +49,7 @@ abstract class Controller
         $this->view = $this->app->view;
         $this->session = $this->app->session;
         $this->mailer = $this->app->mailer;
+        $this->request = new Request();
     }
 
     /**
@@ -117,13 +124,7 @@ abstract class Controller
      */
     protected function input(string $key = null, $default = null)
     {
-        $input = array_merge($_GET, $_POST);
-        
-        if ($key === null) {
-            return $input;
-        }
-        
-        return $input[$key] ?? $default;
+        return $this->request->input($key, $default);
     }
 
     /**
@@ -131,7 +132,7 @@ abstract class Controller
      */
     protected function method(): string
     {
-        return $_SERVER['REQUEST_METHOD'];
+        return $this->request->method();
     }
 
     /**
@@ -139,7 +140,7 @@ abstract class Controller
      */
     protected function isGet(): bool
     {
-        return $this->method() === 'GET';
+        return $this->request->isGet();
     }
 
     /**
@@ -147,7 +148,7 @@ abstract class Controller
      */
     protected function isPost(): bool
     {
-        return $this->method() === 'POST';
+        return $this->request->isPost();
     }
 
     /**
@@ -155,7 +156,7 @@ abstract class Controller
      */
     protected function isPut(): bool
     {
-        return $this->method() === 'PUT';
+        return $this->request->isPut();
     }
 
     /**
@@ -163,7 +164,7 @@ abstract class Controller
      */
     protected function isDelete(): bool
     {
-        return $this->method() === 'DELETE';
+        return $this->request->isDelete();
     }
 
     /**
@@ -305,7 +306,7 @@ abstract class Controller
      */
     protected function file(string $key)
     {
-        return $_FILES[$key] ?? null;
+        return $this->request->file($key);
     }
 
     /**
@@ -337,5 +338,13 @@ abstract class Controller
     protected function getApp(): Application
     {
         return $this->app;
+    }
+
+    /**
+     * Get request instance
+     */
+    protected function getRequest(): Request
+    {
+        return $this->request;
     }
 } 

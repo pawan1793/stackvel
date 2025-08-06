@@ -234,7 +234,33 @@ class Router
             throw new \InvalidArgumentException("Method {$method} not found in controller {$controllerClass}");
         }
 
-        return call_user_func_array([$controllerInstance, $method], $parameters);
+        // Create Request instance and set parameters
+        $request = new Request();
+        $request->setParameters($parameters);
+
+        // Get method parameters using reflection
+        $reflection = new \ReflectionMethod($controllerInstance, $method);
+        $methodParameters = $reflection->getParameters();
+        
+        // Build arguments array for method call
+        $arguments = [];
+        $paramIndex = 0;
+        
+        foreach ($methodParameters as $param) {
+            $paramType = $param->getType();
+            
+            // If parameter is Request type, inject the request object
+            if ($paramType && $paramType->getName() === 'Stackvel\\Request') {
+                $arguments[] = $request;
+            }
+            // If parameter is not Request type, use route parameters
+            else {
+                $arguments[] = $parameters[$paramIndex] ?? null;
+                $paramIndex++;
+            }
+        }
+
+        return call_user_func_array([$controllerInstance, $method], $arguments);
     }
 
     /**

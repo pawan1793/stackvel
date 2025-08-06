@@ -22,19 +22,14 @@ $router->get('/json', function () {
     return ['message' => 'JSON response from Stackvel Framework'];
 });
 
-// Test route to verify routing is working
-$router->get('/routing-test', function () {
-    $app = Stackvel\Application::getInstance();
-    $basePath = $app->getBasePath();
-    $currentUrl = $_SERVER['REQUEST_URI'] ?? '';
-    $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-    
-    return [
-        'message' => 'Routing test successful!',
-        'base_path' => $basePath,
-        'current_url' => $currentUrl,
-        'script_name' => $scriptName,
-        'detected_uri' => parse_url($currentUrl, PHP_URL_PATH),
-        'app_url' => $app->url('/test')
-    ];
-});
+
+
+// Example routes demonstrating Request parameter injection
+$router->get('/request-example', 'HomeController@requestExample');
+$router->post('/request-example', 'HomeController@requestExample');
+
+// User routes with Request parameter examples
+$router->get('/users/{id}/request-example', 'UserController@exampleWithRequest');
+$router->post('/users/{id}/request-example', 'UserController@exampleWithRequest');
+$router->get('/users/advanced-request', 'UserController@advancedRequestExample');
+$router->post('/users/advanced-request', 'UserController@advancedRequestExample');

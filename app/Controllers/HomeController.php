@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use Stackvel\Request;
 
 /**
  * Home Controller
@@ -123,5 +124,13 @@ class HomeController extends Controller
                 'host' => $_ENV['MAIL_HOST'] ?? 'smtp.mailtrap.io'
             ]
         ]);
+    }
+
+    /**
+     * Example method showing Request parameter usage
+     */
+    public function requestExample(Request $request): array
+    {
+        dd($request->all());
     }
 } 
