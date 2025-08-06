@@ -26,10 +26,4 @@ $router->get('/json', function () {
 
 // Example routes demonstrating Request parameter injection
 $router->get('/request-example', 'HomeController@requestExample');
-$router->post('/request-example', 'HomeController@requestExample');
 
-// User routes with Request parameter examples
-$router->get('/users/{id}/request-example', 'UserController@exampleWithRequest');
-$router->post('/users/{id}/request-example', 'UserController@exampleWithRequest');
-$router->get('/users/advanced-request', 'UserController@advancedRequestExample');
-$router->post('/users/advanced-request', 'UserController@advancedRequestExample');

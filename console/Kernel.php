@@ -518,7 +518,7 @@ class {$name} extends Controller
 
 namespace App\Models;
 
-use Stackvel\Core\Model;
+use Stackvel\Model;
 
 /**
  * {$name} Model

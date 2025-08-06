@@ -4,6 +4,7 @@ namespace Stackvel;
 
 use Stackvel\Router;
 use Stackvel\Database;
+use Stackvel\DatabaseManager;
 use Stackvel\View;
 use Stackvel\Mailer;
 use Stackvel\Session;
@@ -31,7 +32,7 @@ class Application
      * Core framework components
      */
     public Router $router;
-    public Database $database;
+    public DatabaseManager $database;
     public View $view;
     public Mailer $mailer;
     public Session $session;
@@ -50,7 +51,7 @@ class Application
         // Initialize core components
         $this->config = new Config();
         $this->session = new Session();
-        $this->database = new Database();
+        $this->database = new DatabaseManager($this->config);
         $this->view = new View();
         $this->mailer = new Mailer();
         $this->router = new Router();

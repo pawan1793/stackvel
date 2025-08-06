@@ -2,6 +2,8 @@
 
 namespace Stackvel;
 
+use PDO;
+
 /**
  * Stackvel Framework - Config Class
  * 
@@ -37,12 +39,43 @@ class Config
                 'key' => $_ENV['APP_KEY'] ?? null
             ],
             'database' => [
-                'connection' => $_ENV['DB_CONNECTION'] ?? 'mysql',
-                'host' => $_ENV['DB_HOST'] ?? '127.0.0.1',
-                'port' => $_ENV['DB_PORT'] ?? '3306',
-                'database' => $_ENV['DB_DATABASE'] ?? 'stackvel',
-                'username' => $_ENV['DB_USERNAME'] ?? 'root',
-                'password' => $_ENV['DB_PASSWORD'] ?? ''
+                'default' => $_ENV['DB_CONNECTION'] ?? 'mysql',
+                'connections' => [
+                    'mysql' => [
+                        'driver'    => 'mysql',
+                        'host'      => $_ENV['DB_HOST'] ?? '127.0.0.1',
+                        'port'      => $_ENV['DB_PORT'] ?? '3306',
+                        'database'  => $_ENV['DB_DATABASE'] ?? 'stackvel',
+                        'username'  => $_ENV['DB_USERNAME'] ?? 'root',
+                        'password'  => $_ENV['DB_PASSWORD'] ?? '',
+                        'charset'   => 'utf8mb4',
+                        'collation' => 'utf8mb4_unicode_ci',
+                        'prefix'    => '',
+                        'strict'    => false,
+                        'options'   => [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES => false,
+                        ]
+                    ],
+                    'mysql_otherdb' => [
+                        'driver'    => 'mysql',
+                        'host'      => $_ENV['DB_HOST'] ?? '127.0.0.1',
+                        'port'      => $_ENV['DB_PORT'] ?? '3306',
+                        'database'  => $_ENV['DB_OTHER_DATABASE'] ?? 'otherdb',
+                        'username'  => $_ENV['DB_USERNAME'] ?? 'root',
+                        'password'  => $_ENV['DB_PASSWORD'] ?? '',
+                        'charset'   => 'utf8mb4',
+                        'collation' => 'utf8mb4_unicode_ci',
+                        'prefix'    => '',
+                        'strict'    => false,
+                        'options'   => [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                            PDO::ATTR_EMULATE_PREPARES => false,
+                        ]
+                    ],
+                ]
             ],
             'mail' => [
                 'driver' => $_ENV['MAIL_MAILER'] ?? 'smtp',
@@ -191,6 +224,31 @@ class Config
     public function getDatabaseConfig(): array
     {
         return $this->get('database', []);
+    }
+
+    /**
+     * Get database connections configuration
+     */
+    public function getDatabaseConnections(): array
+    {
+        return $this->get('database.connections', []);
+    }
+
+    /**
+     * Get default database connection name
+     */
+    public function getDefaultDatabaseConnection(): string
+    {
+        return $this->get('database.default', 'mysql');
+    }
+
+    /**
+     * Get specific database connection configuration
+     */
+    public function getDatabaseConnection(string $connection): ?array
+    {
+        $connections = $this->getDatabaseConnections();
+        return $connections[$connection] ?? null;
     }
 
     /**

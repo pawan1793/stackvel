@@ -195,7 +195,7 @@ Create models in `app/Models/`:
 
 namespace App\Models;
 
-use Stackvel\Core\Model;
+use Stackvel\Model;
 
 class User extends Model
 {
@@ -216,6 +216,62 @@ class User extends Model
     }
 }
 ```
+
+### Multiple Database Connections
+
+Stackvel supports multiple database connections. Specify a connection in your model:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Stackvel\Model;
+
+class otherdbUser extends Model
+{
+    protected string $table = 'users';
+    
+    // Specify which database connection to use
+    protected string $connection = 'mysql_otherdb';
+    
+    protected array $fillable = [
+        'name', 'email', 'password'
+    ];
+}
+```
+
+Configure connections in your `.env` file:
+
+```env
+# Default connection
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=stackvel
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Additional connection
+DB_OTHER_DATABASE=otherdb
+```
+
+Use different connections:
+
+```php
+// Uses default connection
+$user = \App\Models\User::create(['name' => 'John', 'email' => 'john@example.com']);
+
+// Uses mysql_otherdb connection
+$otherdbUser = \App\Models\OtherdbUser::create(['name' => 'Jane', 'email' => 'jane@otherdb.com']);
+
+// Direct database access
+$app = \Stackvel\Application::getInstance();
+$defaultDb = $app->database->connection('mysql');
+$otherdbDb = $app->database->connection('mysql_otherdb');
+```
+
+See [Multiple Database Connections Documentation](docs/multiple-database-connections.md) for more details.
 
 ## 🎨 Views (Blade Templates)
 

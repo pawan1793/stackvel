@@ -43,11 +43,24 @@ abstract class Model
     protected Database $database;
 
     /**
+     * The database connection name
+     */
+    protected string $connection = '';
+
+    /**
      * Constructor
      */
     public function __construct(array $attributes = [])
     {
-        $this->database = Application::getInstance()->database;
+        $app = Application::getInstance();
+        
+        // Use specified connection or default connection
+        if (!empty($this->connection)) {
+            $this->database = $app->database->connection($this->connection);
+        } else {
+            $this->database = $app->database->getDefaultConnection();
+        }
+        
         $this->fill($attributes);
     }
 
