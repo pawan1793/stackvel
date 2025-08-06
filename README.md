@@ -417,11 +417,6 @@ $errors = $this->validate($data, [
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
-
-- **Documentation**: [Wiki](https://github.com/your-username/stackvel/wiki)
-- **Issues**: [GitHub Issues](https://github.com/your-username/stackvel/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/stackvel/discussions)
 
 ## 🙏 Acknowledgments
 
